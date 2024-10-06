@@ -2,33 +2,34 @@ import java.util.Scanner;
 
 public class Main {
     public static String[] todos = new String[10];
-    public static Scanner scanner = new Scanner(System.in);
+    public static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println("Before delete");
+        System.out.println("Before edit");
         addTodoList("Belajar");
         addTodoList("Menggambar");
         addTodoList("Menulis");
         addTodoList("Menyetir");
-        System.out.println("After Edit");
+        System.out.println("After edit");
         editTodoList(2, "Menari");
-        showTodoList();
+        showTodolist();
     }
 
-    public static void showTodoList() {
+    public static void showTodolist() {
         System.out.println("TODO LIST");
-        for (int i = 0; i < todos.length; i++) {
+        for (int i = 0; i < todos. length; i++){
             String todo = todos[i];
             if (todo != null) {
-                System.out.println((i + 1) + ". " + todo);
+                System.out.println((i + 1) + ", " + todo);
             }
         }
     }
 
     public static void addTodoList(String todo) {
+
         resizeIfFull();
 
-        //add todo to array that has null element
+        // add todo to array that has null element
         for (int i = 0; i < todos.length; i++) {
             if (todos[i] == null) {
                 todos[i] = todo;
@@ -38,15 +39,16 @@ public class Main {
     }
 
     private static void resizeIfFull() {
-        // check if full
-        Boolean isFull = true;
-        for (int i = 0; i < todos.length; i++) {
+        // chek is full
+        boolean isFull = true;
+        for (int i= 0; i < todos.length; i++) {
             if (todos[i] == null) {
                 isFull = false;
                 break;
             }
         }
-        // resize twice its size if full
+
+        // Resize to two times bigger is Full
         if (isFull) {
             resizeArrayToTwoTimesBigger();
         }
@@ -61,51 +63,120 @@ public class Main {
     }
 
     public static boolean removeTodoList(Integer number) {
-        //check if the number is 0 or less than zero
-        if (number <= 0) {
-            if (isSelectedToDoNotValid(number)) {
-                return true;
-            }
-            //check if the number is greater than the todos length
-            if (number - 1 > todos.length - 1) {
-                return false;
-            }
-            //check whether the element is already null
-            if (todos[number - 1] == null) {
-                return false;
-            }
-
-            for (int i = number - 1; i < todos.length; i++) {
-                if (i == (todos.length - 1)) {
-                    todos[i] = null;
-                } else {
-                    todos[i] = todos[i + 1];
-                }
-            }
-            return true;
-        }
-
-        public static boolean editTodoList (Integer number, String newTodo){
-            if (isSelectedToDoNotValid(number)) {
-                return false;
-            }
-            todos[number - 1] = newTodo;
-            return true;
-        }
-        private static boolean isSelectedToDoNotValid (Integer number){
-            //check if the number is 0 or less than zero
-            if (number <= 0) {
-                return true;
-            }
-            //check if the number is greater than the todos length
-            if (number - 1 > todos.length - 1) {
-                return true;
-            }
-            //check whether the element is already null
-            if (todos[number - 1] == null) {
-                return true;
-            }
+        if (isSelectedTodoNotValid(number)) {
             return false;
         }
+
+        for (int i = number - 1; i < todos.length; i++) {
+            //if todo is the last element
+            if (i == (todos.length - 1)) {
+                todos[i] = null;
+            } else {
+                // replace with the element on the right
+                todos[i] = todos[i + 1];
+            }
+        }
+        return true;
     }
+
+    private static boolean isSelectedTodoNotValid(Integer number) {
+        // check if the number is less then equal zero
+        if (number <= 0) {
+            return true;
+        }
+
+        // check if the number greater than the todos size/zero
+        if (number - 1 > todos.length - 1) {
+            return true;
+        }
+
+        //check whether the element is already null
+        if (todos[number - 1] == null) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean editTodoList(Integer number,  String newTodo) {
+        if (isSelectedTodoNotValid(number)) {
+            return false;
+        }
+        todos[number - 1] = newTodo;
+        return true;
+    }
+
+    public static String input(String info) {
+        System.out.print(info + " : ");
+        String data = sc.nextLine();
+        return data;
+    }
+
+    public static void showMainMenu() {
+        boolean isRunning = true;
+        while (isRunning) {
+            showTodolist();
+            System.out.println("1. Tambah");
+            System.out.println("2. Hapus");
+            System.out.println("3. Edit");
+            System.out.println("4. Keluar");
+            String selectedMenu = input("pilih");
+
+            switch (selectedMenu) {
+                case "1":
+                    showMenuAddTodoList();
+                    break;
+                case "2":
+                    showMenuRemoveTodolist();
+                    break;
+                case "3":
+                    showMenuEditTodoList();
+                    break;
+                case "4":
+                    isRunning = false;
+                    break;
+            }
+        }
+    }
+
+    public static void showMenuAddTodoList() {
+        System.out.println("MENAMBAH TODO LIST");
+        String todo = input("Todo (x jika batal)");
+        if (todo.equals("x")) {
+            //batal
+        } else {
+            addTodoList(todo);
+        }
+    }
+
+    public static void   showMenuRemoveTodolist() {
+        System.out.println("MEENGHAPUS TODO LIST");
+        String number = input("Nomor yang dihapus (x jika batal)");
+        if (number.equals("x")) {
+            //batal
+        } else {
+            boolean success = removeTodoList(Integer.parseInt(number));
+            if (success) {
+                System.out.println("Gagal menghapus todo list : " + number);
+            }
+        }
+    }
+
+    public static void showMenuEditTodoList() {
+        System.out.println("MENGEDIT TODO LIST");
+        String selectedTodo = input("Masukan nomot todo (x jika batal)");
+        if (selectedTodo.equals("x")) {
+            return;
+        }
+        String newTodo = input("Masukan todo yang baru (x jika batal");
+        if (newTodo.equals("x")) {
+            return;
+        }
+        boolean isEditTodoSuccess = editTodoList(Integer.parseInt(selectedTodo), newTodo);
+        if (isEditTodoSuccess) {
+            System.out.println("Berhasil mengedit todo");
+        } else {
+            System.out.println("Gagal mengedit todo");
+        }
+    }
+
 }
